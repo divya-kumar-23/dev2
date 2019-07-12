@@ -7,7 +7,7 @@ const connectDB = async () => {
       useNewUrlParser: true,
       useCreateIndex: true
     });
-    //console.log("MongoDb connected...");
+    console.log("mmmmmmmmMongoDb connected...");
   } catch (err) {
     console.error(err.message);
     //EXIT process with failure

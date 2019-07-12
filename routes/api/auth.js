@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const auth = require('../../middleware/auth');
+const bcrypt = require('jsonwebtoken');
 
 const User = require('../../models/User');
 
@@ -18,7 +19,7 @@ router.get("/", auth, async (req, res) => {
         res.json(user);
     } catch (err) {
         console.log(err.message);
-        res.status(500).send('Server error');
+        res.status(500).send('Server errorr');
     }
 }
 );
@@ -42,7 +43,7 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { name, email, password } = req.body;
+        const { email, password } = req.body;
         try {
             //see if user exists
             let user = await User.findOne({ email });
@@ -51,9 +52,13 @@ router.post(
                 res.status(400).json({ errors: [{ msg: "Invalid credentials" }] });
             }
 
+            const isMatch = await bcrypt.compare(password, user.password);
 
-
-
+            if (!isMatch) {
+                return res
+                    .status(400)
+                    .json({ errors: [{ msg: "Invalid credentials" }] })
+            }
 
             const payload = {
                 user: {
